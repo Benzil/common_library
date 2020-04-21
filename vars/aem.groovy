@@ -17,5 +17,4 @@ def calculateStack(environment) {
     }
   }
   println stack
-  return stack
 }
