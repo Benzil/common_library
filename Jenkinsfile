@@ -7,10 +7,10 @@ pipeline {
       steps {
         sh "echo TEST"
         script {
-          test.calculateStack('lab2')
-          test.calculateStack('lab3b')
-          test.calculateStack('lab5a')
-          test.calculateStack('labe2esi')
+          aem.calculateStack('lab2')
+          aem.calculateStack('lab3b')
+          aem.calculateStack('lab5a')
+          aem.calculateStack('labe2esi')
         }
       }
     }
