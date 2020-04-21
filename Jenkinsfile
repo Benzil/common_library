@@ -7,7 +7,10 @@ pipeline {
       steps {
         sh "echo TEST"
         script {
-          test.testLibrary()
+          aem.calculateStack('lab2')
+          aem.calculateStack('lab3b')
+          aem.calculateStack('lab5a')
+          aem.calculateStack('labe2esi')
         }
       }
     }
