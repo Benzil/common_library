@@ -9,6 +9,7 @@ def calculateStack(environment) {
     } catch(Exception ex) {
       println "[ERROR] Can't find provided environment"
       println "[ERROR] Check if provided environment name exists in a config"
+      currentBuild.result = 'FAILURE'
     }
   }
 }
