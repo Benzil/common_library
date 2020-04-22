@@ -3,7 +3,7 @@ def printRed(message) {
 }
 
 def printGreen(message) {
-  println "\u001b[32m" + message + "\u001b[0m"
+  println "\u001b[32;1m" + message + "\u001b[0m"
 }
 
 def printMagenta(message) {

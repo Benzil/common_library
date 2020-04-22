@@ -9,7 +9,7 @@ pipeline {
           instances = aem.calculateStack('lab2')
 
           log.printRed(instances.authors)
-          log.printMagenta("==========================")
+          println "=========${log.printMagenta('======')}================="
           log.printGreen(instances.publishers)
         }
       }
