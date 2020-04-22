@@ -1,5 +1,3 @@
-evaluate(new File("log.groovy"))
-
 // This method works only if 
 def calculateStack(environment) {
   configFileProvider([configFile(fileId: 'opsworks_stacks', variable: 'STACKS')]){
@@ -17,6 +15,6 @@ def invalidateCache(environment) {
 
   dispatchers.each {dispatcher ->
     def response = ['curl','-X','GET','--header', 'CQ-Action: Delete','--header', 'CQ-Handle:/content', '--header', 'CQ-Path:/content', "http://${dispatcher}/invalidate.cache"].execute().text
-    paintGreen(response)
+    log.paintGreen(response)
   }
 }
