@@ -6,10 +6,17 @@ def calculateStack(environment) {
       stack = stacks."${environment}"
       def instances = [authors: stack.authors, publishers: stack.publishers, dispatchers: stack.dispatchers]
       log.printMagenta("[INFO] Found stack for ${environment}")
-      log.printMagenta("[INFO] ${instances.authors}")
-      log.printMagenta("[INFO] ${instances.publishers}")
-      log.printMagenta("[INFO] ${instances.dispatchers}")
+      instances.authors.each {author ->
+        log.printMagenta("[INFO] ${author}")
+      }
+      instances.publishers.each {publisher ->
+        log.printMagenta("[INFO] ${publisher}")
+      }
+      instances.dispatchers.each {dispatcher ->
+        log.printMagenta("[INFO] ${dispatcher}")
+      }
       return instances
+
     } catch(Exception ex) {
       log.printRed("[ERROR] Can't find provided environment")
       log.printRed("[ERROR] Check if provided environment name exists in a config")
