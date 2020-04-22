@@ -6,7 +6,9 @@ pipeline {
     stage ('Testing lab2') {
       steps {
         script {
-          log.paintGreen(aem.invalidateCache('lab2'))
+          aem.calculateStack('lab2')
+          aem.invalidateCache('lab2')
+          aem.calculateStack('lab212312')
         }
       }
     }
