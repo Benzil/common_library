@@ -18,7 +18,7 @@ pipeline {
     stage ('More testing') {
       steps {
         script {
-          instances = aem.calculateStack('labe2esi')
+          // instances = aem.calculateStack('labe2esi')
 
           println instances.authors
           println instances.publishers
