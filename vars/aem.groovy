@@ -34,8 +34,8 @@ def invalidateCache(environment) {
     if(response.contains('OK')) {
       log.printMagenta("[INFO] Cache invalidated successfully")
     } else {
-      log.printRed("[ERROR] Can't reach ${dispatcher}")
-      currentBuild.result = 'FAILURE'
+      log.printRed("[ERROR] Unable to invalidate cache on ${dispatcher}")
+      currentBuild.result = 'UNSTABLE'
     }
   }
 }
