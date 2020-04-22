@@ -15,6 +15,8 @@ def calculateStack(environment) {
         stack = stacks.labe2esi;
         break;
     }
+
+    def instances = [authors: stack.authors, publishers: stack.publishers, dispatchers: stack.dispatchers]
+    return instances
   }
-  println stack
 }

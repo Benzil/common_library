@@ -7,10 +7,22 @@ pipeline {
       steps {
         sh "echo TEST"
         script {
-          aem.calculateStack('lab2')
-          aem.calculateStack('lab3b')
-          aem.calculateStack('lab5a')
-          aem.calculateStack('labe2esi')
+          println aem.calculateStack('lab2')
+          println aem.calculateStack('lab3b')
+          println aem.calculateStack('lab5a')
+          println aem.calculateStack('labe2esi')
+        }
+      }
+    }
+
+    stage ('More testing') {
+      steps {
+        script {
+          instances = aem.calculateStack('labe2esi')
+
+          println instances.authors
+          println instances.publishers
+          println instances.dispatchers
         }
       }
     }
