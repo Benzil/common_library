@@ -21,7 +21,7 @@ pipeline {
     stage ('Testing lab2') {
       steps {
         script {
-          instances = aem.calculateStack('labe2')
+          instances = aem.calculateStack('lab2')
 
           println instances.authors
           println "=========================="
