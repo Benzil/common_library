@@ -2,7 +2,12 @@
 def calculateStack(environment) {
   configFileProvider([configFile(fileId: 'opsworks_stacks', variable: 'STACKS')]){
     stacks = readJSON file: "${STACKS}"
-    stack = stacks."${environment}"
+    try {
+      stack = stacks."${environment}"
+    } catch(Exception ex) {
+      println "[ERROR] Can't find provided environment"
+      println "[ERROR] Check if provided environment name exists in a config"
+    }
 
     def instances = [authors: stack.authors, publishers: stack.publishers, dispatchers: stack.dispatchers]
     return instances
@@ -15,7 +20,6 @@ def invalidateCache(environment) {
 
   dispatchers.each {dispatcher ->
     def response = ['curl','-X','GET','--header', 'CQ-Action: Delete','--header', 'CQ-Handle:/content', '--header', 'CQ-Path:/content', "http://${dispatcher}/invalidate.cache"].execute().text
-    sh "curl -X GET --header 'CQ-Action: Delete' --header 'CQ-Handle:/content' --header 'CQ-Path:/content' http://${dispatcher}/dispatcher/invalidate.cache"
     println response
   }
 }
