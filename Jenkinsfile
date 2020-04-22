@@ -39,7 +39,7 @@ pipeline {
 
           println instances.authors
           println "=========================="
-          println instances.publishers
+          println "\u001B[1;33m${instances.publishers}"
           println "=========================="
           println instances.dispatchers
         }
