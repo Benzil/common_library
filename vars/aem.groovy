@@ -30,7 +30,7 @@ def invalidateCache(environment) {
   dispatchers = instances.dispatchers
 
   dispatchers.each {dispatcher ->
-    def response = ['curl','-X','GET','--header', 'CQ-Action: Delete','--header', 'CQ-Handle:/content', '--header', 'CQ-Path:/content', "http://${dispatcher}/invalidate.cache"].execute().text
+    def response = ['curl','-X','GET','--header', 'CQ-Action: Delete','--header', 'CQ-Handle:/content', '--header', 'CQ-Path:/content', "http://${dispatcher}123123/invalidate.cache"].execute().text
     log.printGreen(response)
   }
 }
