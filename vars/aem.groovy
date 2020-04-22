@@ -30,7 +30,12 @@ def invalidateCache(environment) {
   dispatchers = instances.dispatchers
 
   dispatchers.each {dispatcher ->
-    def response = ['curl','-X','GET','--header', 'CQ-Action: Delete','--header', 'CQ-Handle:/content', '--header', 'CQ-Path:/content', "http://${dispatcher}123123/invalidate.cache"].execute().text
-    log.printGreen(response)
+    def response = ['curl','-X','GET','--header', 'CQ-Action: Delete','--header', 'CQ-Handle:/content', '--header', 'CQ-Path:/content', "http://${dispatcher}/invalidate.cache"].execute().text
+    if(response == '<H1>OK</H1>') {
+      log.printGreen("[INFO] Cache invalidated successfully")
+    } else {
+      log.printRed("[ERROR] Can't reach ${dispatcher}")
+      currentBuild.result = 'FAILURE'
+    }
   }
 }
