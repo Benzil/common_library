@@ -32,7 +32,7 @@ pipeline {
       }
     }
 
-    stage ('Testing labe2si') {
+    stage ('Testing labe2esi') {
       steps {
         script {
           instances = aem.calculateStack('labe2esi')
@@ -49,7 +49,7 @@ pipeline {
     stage ('Testing lab3b') {
       steps {
         script {
-          instances = aem.calculateStack('labe3b')
+          instances = aem.calculateStack('lab3b')
 
           println instances.authors
           println "=========================="
