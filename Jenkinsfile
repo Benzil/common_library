@@ -6,7 +6,7 @@ pipeline {
     stage ('Testing lab2') {
       steps {
         script {
-          aem.invalidateCache('lab2')
+          log.paintGreen(aem.invalidateCache('lab2'))
         }
       }
     }
