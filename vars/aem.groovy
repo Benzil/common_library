@@ -47,7 +47,7 @@ def collectAemInstances(configObject) {
 
 def flushJsp(configObject) {
   instances = collectAemInstances(configObject)
-  withCredentials([usernameColoPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
+  withCredentials([usernameColonPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
     instances.each {instance ->
       log.printMagenta("[INFO] Sending cURL to slingjsp on ${instance}")
       def sling_response = ["curl", "-I","-u", "${admin}", "-X", "POST", "http://${instance}/system/console/slingjsp"].execute().text
@@ -63,7 +63,7 @@ def flushJsp(configObject) {
 // Without checks cause respond seems to be too long
 def refreshBundles(configObject) {
   instances = collectAemInstances(configObject)
-  withCredentials([usernameColoPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
+  withCredentials([usernameColonPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
     instances.each {instance ->
       log.printMagenta("[INFO] Sending cURL to refresh bundles on ${instance}")
       def response = ["curl", "-u", "${admin}", "-X", "POST", "-F", "action=refreshPackages", "http://${instance}/system/console/bundles"].execute().text
