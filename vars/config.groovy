@@ -5,8 +5,10 @@ def calculateConfig(environment) {
   configFileProvider([configFile(fileId: 'web_config', variable: 'CONFIG')]){
     def conf_map = readJSON file: "${CONFIG}"
     try {
+      def configObject = [global: conf_map.global]
+
       stack = conf_map."${environment}"
-      def configObject = [global: stack.global, authors: stack.authors, publishers: stack.publishers, dispatchers: stack.dispatchers]
+      configObject = [authors: stack.authors, publishers: stack.publishers, dispatchers: stack.dispatchers]
       log.printMagenta("[INFO] Found stack for ${environment}")
       instances.authors.each {author ->
         log.printMagenta("[INFO] Authors:")
