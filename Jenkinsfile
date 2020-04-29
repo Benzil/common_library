@@ -21,7 +21,7 @@ pipeline {
     stage ('Refresh bundles') {
       steps {
         script {
-          aem.refreshBundles(configObject, admin)
+          aem.refreshBundles(configObject, "${admin}")
         }
       }
     }
@@ -29,7 +29,7 @@ pipeline {
     stage ('Flush JSP') {
       steps {
         script {
-          aem.flushJsp(configObject, admin)
+          aem.flushJsp(configObject, "${admin}")
         }
       }
     }
