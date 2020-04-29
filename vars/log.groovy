@@ -19,10 +19,9 @@ def checkCurl(response) {
     printRed("[ERROR] Unauthorized request")
     currentBuild.result = 'UNSTABLE'
   } else if (response.contains('500')) {
-    printMagenta("[ERROR] Server error")
+    printRed("[ERROR] Server error")
     currentBuild.result = 'UNSTABLE'
   } else {
-    printGreen("[DEBUG] ${response}")
     printRed("[ERROR] Unable to send cURL request")
     currentBuild.result = 'UNSTABLE'
   }

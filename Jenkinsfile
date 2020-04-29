@@ -18,6 +18,14 @@ pipeline {
       }
     }
 
+    stage ('Flush JSP') {
+      steps {
+        script {
+          aem.flushJsp(configObject, "${admin}")
+        }
+      }
+    }
+    
     stage ('Refresh bundles') {
       steps {
         script {
@@ -26,12 +34,5 @@ pipeline {
       }
     }
 
-    stage ('Flush JSP') {
-      steps {
-        script {
-          aem.flushJsp(configObject, "${admin}")
-        }
-      }
-    }
   }
 }
