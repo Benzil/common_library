@@ -43,7 +43,15 @@ def curlSlingjsp(creds, instance, page) {
   log.checkCurl(response)
 }
 
-def flushJsp(instances, creds) {
+def collectAemInstances(configObject) {
+  def instances = []
+
+  instances.addAll(configObject.authors)
+  instances.addAll(configObject.publishers)
+}
+
+def flushJsp(configObject, creds) {
+  instances = collectAemInstances(configObject)
   instances.each {instance ->
     curlSlingjsp(creds, instance, 'slingjsp')
     curlSlingjsp(creds, instance, 'scriptcache')
@@ -51,9 +59,9 @@ def flushJsp(instances, creds) {
 }
 
 // Without checks cause respond seems to be too long
-def refreshBundles(instances, creds) {
+def refreshBundles(configObject, creds) {
+  instances = collectAemInstances(configObject)
   instances.each {instance ->
-    log.printGreen("[DEBUG] Received ${instances} and ${creds}")
     log.printMagenta("[INFO] Sending cURL to refresh bundles on ${instance}")
     def response = ["curl", "-u", "${creds}", "-X", "POST", "-F", "action=refreshPackages", "http://${instance}/system/console/bundles"].execute().text
   }

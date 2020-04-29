@@ -13,11 +13,20 @@ pipeline {
       steps {
         script {
           configObject = aem.calculateConfig('lab2')
+          currentBuild.displayName = 'lab2'
         }
       }
     }
 
-    stage ('Invalidate cache') {
+    stage ('Refresh bundles') {
+      steps {
+        script {
+          aem.refreshBundles(configObject, admin)
+        }
+      }
+    }
+
+    stage ('Flush JSP') {
       steps {
         script {
           aem.flushJsp(configObject, admin)
