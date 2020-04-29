@@ -2,6 +2,12 @@
 
 pipeline {
   agent any
+
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '5'))
+    withCredentials([usernameColonPassword(credentialsId: 'lab_aem_admin_user', variable: 'admin')])
+  }
+
   stages {
     stage ('Init') {
       steps {
@@ -14,7 +20,7 @@ pipeline {
     stage ('Invalidate cache') {
       steps {
         script {
-          aem.invalidateCache(configObject)
+          aem.flushJsp(configObject, admin)
         }
       }
     }

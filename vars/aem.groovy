@@ -43,14 +43,23 @@ def invalidateCache(configObject) {
   }
 }
 
-def buildArtifact(branch, configObject) {
-
+def curlSlingjsp(creds, instance, page) {
+  def response = ["curl", "-u", "${creds}", "-X", "POST", "http://${instance}/system/console/${page}"].execute().text
+  if(response.contains('OK')) {
+      log.printMagenta("[INFO] POST to http://${instance}/system/console/${page} sent successfully")
+    } else {
+      log.printRed("[ERROR] Unable to send POST to http://${instance}/system/console/${page}")
+      currentBuild.result = 'UNSTABLE'
+    }
 }
 
-def saveArtifact() {
+def flushJsp(configObject, creds) {
+  def instances = []
+  instances.addAll(configObject.authors)
+  instances.addAll(configObject.publishers)
 
-}
-
-def deployArtifact(tag, configObject) {
-
+  instances.each {instance ->
+    curlSlingjsp(creds, instance, 'slingjsp')
+    curlSlingjsp(creds, instance, 'scriptcache')
+  }
 }
