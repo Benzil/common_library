@@ -7,12 +7,16 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '5'))
   }
 
+  parameters {
+    choice(name: 'environment', choices: ['lab2','lab3b','lab5a','labe2esi'], description: '')
+  }
+
   stages {
     stage ('Init') {
       steps {
         script {
-          configObject = aem.calculateConfig('lab2')
-          currentBuild.displayName = 'lab2'
+          configObject = aem.calculateConfig(params.environment)
+          currentBuild.displayName = params.environment
         }
       }
     }
@@ -32,6 +36,5 @@ pipeline {
         }
       }
     }
-
   }
 }
