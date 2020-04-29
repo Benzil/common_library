@@ -19,6 +19,7 @@ def checkCurl(response) {
     printRed("[ERROR] Unauthorized request")
     currentBuild.result = 'UNSTABLE'
   } else {
+    printGreen("[DEBUG] ${response}")
     printRed("[ERROR] Unable to send cURL request")
     currentBuild.result = 'UNSTABLE'
   }
