@@ -6,7 +6,7 @@ def calculateConfig(environment) {
     def conf_map = readJSON file: "${CONFIG}"
     try {
       stack = conf_map."${environment}"
-      def instances = [authors: stack.authors, publishers: stack.publishers, dispatchers: stack.dispatchers]
+      def configObject = [global: stack.global, authors: stack.authors, publishers: stack.publishers, dispatchers: stack.dispatchers]
       log.printMagenta("[INFO] Found stack for ${environment}")
       instances.authors.each {author ->
         log.printMagenta("[INFO] Authors:")
@@ -20,9 +20,7 @@ def calculateConfig(environment) {
         log.printMagenta("[INFO] Dispatchers:")
         log.printMagenta("[INFO] ${dispatcher}")
       }
-      return instances.authors
-      return insatnces.publishers
-      return instances.dispatchers      
+      return configOject
     } catch(Exception ex) {
       log.printRed("[ERROR] Can't find provided environment")
       log.printRed("[ERROR] Check if ${environment} is in a config")
