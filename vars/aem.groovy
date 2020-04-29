@@ -19,10 +19,14 @@ def calculateStack(environment) {
 
     } catch(Exception ex) {
       log.printRed("[ERROR] Can't find provided environment")
-      log.printRed("[ERROR] Check if provided environment name exists in a config")
+      log.printRed("[ERROR] Check if ${environment} is in a config")
       currentBuild.result = 'FAILURE'
     }
   }
+}
+
+def calculateConfig() {
+  
 }
 
 def invalidateCache(environment) {
@@ -38,4 +42,16 @@ def invalidateCache(environment) {
       currentBuild.result = 'UNSTABLE'
     }
   }
+}
+
+def buildArtifact(tag) {
+
+}
+
+def saveArtifact() {
+
+}
+
+def deployArtifact(tag) {
+
 }

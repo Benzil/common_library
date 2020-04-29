@@ -3,7 +3,7 @@
 pipeline {
   agent any
   stages {
-    stage ('Testing lab2') {
+    stage ('Init') {
       steps {
         script {
           aem.invalidateCache('lab2')
