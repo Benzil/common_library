@@ -10,7 +10,7 @@ def calculateConfig(environment) {
       configObject["authors"] = conf["stacks"]["${environment}"]["authors"]
       configObject["publishers"] = conf["stacks"]["${environment}"]["publishers"]
       configObject["dispatchers"] = conf["stacks"]["${environment}"]["dispatchers"]
-      log.printMagenta("[INFO] Found stack for ${environment}")
+      log.printMagenta("[INFO] Found ${environment} stack")
       // Uncomment to debug asigning
       // configObject.authors.each {author ->
       //   log.printMagenta("[INFO] ${author}")
@@ -33,8 +33,8 @@ def calculateConfig(environment) {
 
 def invalidateCache(configObject) {
   configObject.dispatchers.each {dispatcher ->
-    def response = ['curl','-X','GET','--header', 'CQ-Action: Delete','--header', 'CQ-Handle:/content', '--header', 'CQ-Path:/content', "http://${dispatcher}/invalidate.cache"].execute().text
-    if(response.contains('OK')) {
+    def response = ['curl', '-I', '-X','GET','--header', 'CQ-Action: Delete','--header', 'CQ-Handle:/content', '--header', 'CQ-Path:/content', "http://${dispatcher}/invalidate.cache"].execute().text
+    if(response.contains('200')) {
       log.printMagenta("[INFO] Cache invalidated successfully")
     } else {
       log.printRed("[ERROR] Unable to invalidate cache on ${dispatcher}")
@@ -44,8 +44,8 @@ def invalidateCache(configObject) {
 }
 
 def curlSlingjsp(creds, instance, page) {
-  def response = ["curl", "-u", "${creds}", "-X", "POST", "http://${instance}/system/console/${page}"].execute().text
-  if(response.contains('')) {
+  def response = ["curl", "-I","-u", "${creds}", "-X", "POST", "http://${instance}/system/console/${page}"].execute().text
+  if(response.contains('302')) {
       log.printMagenta("[INFO] POST to http://${instance}/system/console/${page} sent successfully")
     } else {
       log.printRed("[ERROR] Unable to send POST to http://${instance}/system/console/${page}")
