@@ -56,5 +56,5 @@ def flushJsp(configObject, creds) {
 
 // Without checks cause respond seems to be too long
 def refreshBundles(instance, creds) {
-  def response = ["curl", "-u", "${creds}", "-X", "POST", "-F", "action=refreshPackages", "http://${instance}/system/console/bundles"].execute().text.substring(2,8)
+  def response = ["curl", "-u", "${creds}", "-X", "POST", "-F", "action=refreshPackages", "http://${instance}/system/console/bundles"].execute().text
 }
