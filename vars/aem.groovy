@@ -51,7 +51,7 @@ def collectAemInstances(configObject) {
 }
 
 def flushJsp(configObject, creds) {
-  log.printGreen(creds)
+  log.printGreen(configObject.global.aem_admin_id)
   instances = collectAemInstances(configObject)
   instances.each {instance ->
     log.printMagenta("[INFO] Sending cURL to slingjsp on ${instance}")
