@@ -5,16 +5,17 @@ pipeline {
   stages {
     stage ('Init') {
       steps {
-        aem.calculateConfig('lab2')
-        aem.calculateConfig('lab3b')
-        aem.calculateConfig('labe2esi')
-        aem.calculateConfig('lab5a')
+        script {
+          configObject = aem.calculateConfig('lab2')
+        }
       }
     }
 
-    stage ('Error test') {
+    stage ('Invalidate cache') {
       steps {
-        aem.calculateConfig('lab23')
+        script {
+          aem.invalidateCache(configObject)
+        }
       }
     }
   }
