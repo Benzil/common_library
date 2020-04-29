@@ -5,7 +5,6 @@ pipeline {
 
   options {
     buildDiscarder(logRotator(numToKeepStr: '5'))
-    withCredentials([usernameColonPassword(credentialsId: 'lab_aem_admin_user', variable: 'admin')])
   }
 
   stages {
@@ -21,15 +20,15 @@ pipeline {
     stage ('Flush JSP') {
       steps {
         script {
-          aem.flushJsp(configObject, "${admin}")
+          aem.flushJsp(configObject)
         }
       }
     }
-    
+
     stage ('Refresh bundles') {
       steps {
         script {
-          aem.refreshBundles(configObject, "${admin}")
+          aem.refreshBundles(configObject)
         }
       }
     }

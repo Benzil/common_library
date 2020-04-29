@@ -38,11 +38,6 @@ def invalidateCache(configObject) {
   }
 }
 
-def curlSlingjsp(creds, instance, page) {
-  def response = ["curl", "-I","-u", "${creds}", "-X", "POST", "http://${instance}/system/console/${page}"].execute().text
-  log.checkCurl(response)
-}
-
 def collectAemInstances(configObject) {
   def instances = []
   instances.addAll(configObject.authors)
@@ -50,23 +45,28 @@ def collectAemInstances(configObject) {
   return instances
 }
 
-def flushJsp(configObject, creds) {
-  log.printGreen(configObject.global.aem_admin_id)
+def flushJsp(configObject) {
   instances = collectAemInstances(configObject)
-  instances.each {instance ->
-    log.printMagenta("[INFO] Sending cURL to slingjsp on ${instance}")
-    curlSlingjsp(creds, instance, 'slingjsp')
+  withCredentials([usernameColoPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
+    instances.each {instance ->
+      log.printMagenta("[INFO] Sending cURL to slingjsp on ${instance}")
+      def response = ["curl", "-I","-u", "${admin}", "-X", "POST", "http://${instance}/system/console/slingjsp"].execute().text
+      log.checkCurl(response)
 
-    log.printMagenta("[INFO] Sending cURL to scriptcache on ${instance}")
-    curlSlingjsp(creds, instance, 'scriptcache')
+      log.printMagenta("[INFO] Sending cURL to scriptcache on ${instance}")
+      def response = ["curl", "-I","-u", "${admin}", "-X", "POST", "http://${instance}/system/console/scriptcache"].execute().text
+      log.checkCurl(response)
+    }
   }
 }
 
 // Without checks cause respond seems to be too long
-def refreshBundles(configObject, creds) {
+def refreshBundles(configObject) {
   instances = collectAemInstances(configObject)
-  instances.each {instance ->
-    log.printMagenta("[INFO] Sending cURL to refresh bundles on ${instance}")
-    def response = ["curl", "-u", "${creds}", "-X", "POST", "-F", "action=refreshPackages", "http://${instance}/system/console/bundles"].execute().text
+  withCredentials([usernameColoPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
+    instances.each {instance ->
+      log.printMagenta("[INFO] Sending cURL to refresh bundles on ${instance}")
+      def response = ["curl", "-u", "${admin}", "-X", "POST", "-F", "action=refreshPackages", "http://${instance}/system/console/bundles"].execute().text
+    }
   }
 }
