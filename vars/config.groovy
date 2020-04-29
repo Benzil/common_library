@@ -3,30 +3,30 @@
 
 def calculateConfig(environment) {
   configFileProvider([configFile(fileId: 'web_config', variable: 'CONFIG')]){
-    def conf_map = readJSON file: "${CONFIG}"
+    def conf = readJSON file: "${CONFIG}"
+    
+    def configObject = [:]
+    configObject["global"] = conf.global
     try {
-      def configObject = [global: conf_map.global]
-
-      stack = conf_map."${environment}"
-      configObject = [authors: stack.authors, publishers: stack.publishers, dispatchers: stack.dispatchers]
+      configObject["authors"] = conf["stacks"]["${environment}"]["authors"]
+      configObject["publishers"] = conf["stacks"]["${environment}"]["publishers"]
+      configObject["dispatchers"] = conf["stacks"]["${environment}"]["dispatchers"]
       log.printMagenta("[INFO] Found stack for ${environment}")
-      instances.authors.each {author ->
-        log.printMagenta("[INFO] Authors:")
+      configObject.authors.each {author ->
         log.printMagenta("[INFO] ${author}")
       }
-      instances.publishers.each {publisher ->
-        log.printMagenta("[INFO] Publishers:")
+      configObject.publishers.each {publisher ->
         log.printMagenta("[INFO] ${publisher}")
       }
-      instances.dispatchers.each {dispatcher ->
-        log.printMagenta("[INFO] Dispatchers:")
+      configObject.dispatchers.each {dispatcher ->
         log.printMagenta("[INFO] ${dispatcher}")
       }
-      return configOject
     } catch(Exception ex) {
       log.printRed("[ERROR] Can't find provided environment")
       log.printRed("[ERROR] Check if ${environment} is in a config")
       currentBuild.result = 'FAILURE'
     }
+
+    return configObject
   }
 }

@@ -5,9 +5,16 @@ pipeline {
   stages {
     stage ('Init') {
       steps {
-        script {
-          aem.invalidateCache('lab2')
-        }
+        config.calculateConfig('lab2')
+        config.calculateConfig('lab3b')
+        config.calculateConfig('labe2esi')
+        config.calculateConfig('lab5a')
+      }
+    }
+
+    stage ('Error test') {
+      steps {
+        config.calculateConfig('lab2asdasd')
       }
     }
   }
