@@ -51,12 +51,12 @@ def flushJsp(configObject) {
     instances.each {instance ->
       log.printMagenta("[INFO] Sending cURL to slingjsp on ${instance}")
       // def sling_response = ["curl", "-I","-u", "${admin}", "-X", "POST", "http://${instance}/system/console/slingjsp"].execute().text
-      sh(script: "curl -u ${admin} -X POST http://${instance}/system/console/slingjsp")
+      sh(script: "curl -u ${admin} -I -X POST http://${instance}/system/console/slingjsp")
       // log.checkCurl(sling_response)
 
-      log.printMagenta("[INFO] Sending cURL to scriptcache on ${instance}")
+      // log.printMagenta("[INFO] Sending cURL to scriptcache on ${instance}")
       // def script_response = ["curl", "-I","-u", "${admin}", "-X", "POST", "http://${instance}/system/console/scriptcache"].execute().text
-      sh(script: "curl -u ${admin} -X POST http://${instance}/system/console/scriptcache")
+      // sh(script: "curl -u ${admin} -I -X POST http://${instance}/system/console/scriptcache")
       // log.checkCurl(script_response)
     }
   }
@@ -68,7 +68,7 @@ def refreshBundles(configObject) {
   withCredentials([usernameColonPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
     instances.each {instance ->
       // log.printMagenta("[INFO] Sending cURL to refresh bundles on ${instance}")
-      sh(script: "curl -u ${admin} -X POST -F action=refreshPackages http://${instance}/system/console/bundles")
+      sh(script: "curl -u ${admin} -X POST -F action=refreshPackages http://${instance}/system/console/bundles > /dev/null")
       // def response = ["curl", "-u", "${admin}", "-X", "POST", "-F", "action=refreshPackages", "http://${instance}/system/console/bundles"].execute().text
     }
   }
