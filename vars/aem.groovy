@@ -55,6 +55,6 @@ def flushJsp(configObject, creds) {
 }
 
 def refreshBundles(instance, creds) {
-  def response = ["curl", "-I", "-u", "${creds}", "-X", "POST", "-F", "action=refreshPackages", "http://${instance}/system/console/bundles"]
+  def response = ["curl", "-I", "-u", "${creds}", "-X", "POST", "-F", "action=refreshPackages", "http://${instance}/system/console/bundles"].execute().text
   log.checkCurl(response)
 }
