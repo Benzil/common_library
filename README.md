@@ -1,3 +1,6 @@
-# common_library
+# Common library for AEM projects
 
-Some common shit for pipelines
+Requirements:
+
+- Config file provider plugin
+- Config with 'web_config' id

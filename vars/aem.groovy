@@ -1,6 +1,5 @@
 // Config provider plugin needed
-// Config should be in JSON format 
-
+// Config should be in JSON format, example could be found in the root of this repository
 def calculateConfig(environment) {
   configFileProvider([configFile(fileId: 'web_config', variable: 'CONFIG')]){
     def conf = readJSON file: "${CONFIG}"
@@ -44,7 +43,7 @@ def invalidateCache(configObject) {
   }
 }
 
-def buildArtifact(tag) {
+def buildArtifact(branch, configObject) {
 
 }
 
@@ -52,6 +51,6 @@ def saveArtifact() {
 
 }
 
-def deployArtifact(tag) {
+def deployArtifact(tag, configObject) {
 
 }
