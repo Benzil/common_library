@@ -11,6 +11,7 @@ def printMagenta(message) {
 }
 
 def checkCurl(response) {
+  println response
   if (response.contains('200')) {
     printMagenta("[INFO] Response code is 200")
   } else if (response.contains('302')) {
