@@ -45,9 +45,9 @@ def curlSlingjsp(creds, instance, page) {
 
 def collectAemInstances(configObject) {
   def instances = []
-
   instances.addAll(configObject.authors)
   instances.addAll(configObject.publishers)
+  return instances
 }
 
 def flushJsp(configObject, creds) {
