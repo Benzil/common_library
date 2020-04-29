@@ -45,7 +45,7 @@ def invalidateCache(configObject) {
 
 def curlSlingjsp(creds, instance, page) {
   def response = ["curl", "-u", "${creds}", "-X", "POST", "http://${instance}/system/console/${page}"].execute().text
-  if(response.contains('OK')) {
+  if(response.contains('')) {
       log.printMagenta("[INFO] POST to http://${instance}/system/console/${page} sent successfully")
     } else {
       log.printRed("[ERROR] Unable to send POST to http://${instance}/system/console/${page}")
