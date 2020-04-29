@@ -5,16 +5,16 @@ pipeline {
   stages {
     stage ('Init') {
       steps {
-        config.calculateConfig('lab2')
-        config.calculateConfig('lab3b')
-        config.calculateConfig('labe2esi')
-        config.calculateConfig('lab5a')
+        aem.calculateConfig('lab2')
+        aem.calculateConfig('lab3b')
+        aem.calculateConfig('labe2esi')
+        aem.calculateConfig('lab5a')
       }
     }
 
     stage ('Error test') {
       steps {
-        config.calculateConfig('lab2asdasd')
+        aem.calculateConfig('lab23')
       }
     }
   }
