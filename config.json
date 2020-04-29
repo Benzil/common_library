@@ -1,0 +1,36 @@
+{
+  "global": {
+    "environment": "stage",
+    "repository" : "https://github.com/someUser/stage.git",
+    "bucket": "s3stage"
+  },
+  "stacks" : {
+    "stage1": {
+      "authors" : [ 
+        "author.staging1.com:4502"
+      ],
+      "publishers" : [
+        "publish1.staging1.com:4503",
+        "publish2.staging1.com:4503"
+      ],
+      "dispatchers" : [
+        "dispatcher1.staging1.com"
+      ]
+    },
+    "stage2": {
+      "authors" : [ 
+        "author.staging2.com:4502",
+        "author2.staging2.com:4502"
+      ],
+      "publishers" : [
+        "publish1.staging2.com:4503"
+      ],
+      "dispatchers" : [
+        "dispatcher1.staging2.com",
+        "dispatcher1.staging2.com",
+        "dispatcher1.staging2.com",
+        "dispatcher1.staging2.com"
+      ]
+    }
+  }
+}
