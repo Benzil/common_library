@@ -15,8 +15,6 @@ def checkCurl(response) {
     printMagenta("[INFO] Response code is 200")
   } else if (response.contains('302')) {
     printMagenta("[INFO] Response code is 302")
-  } else if (response.contains('status')) {
-    printMagenta("[INFO] Bundles successfully refreshed")
   } else if (response.contains('401')) {
     printRed("[ERROR] Unauthorized request")
     currentBuild.result = 'UNSTABLE'
