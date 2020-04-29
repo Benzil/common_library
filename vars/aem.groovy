@@ -50,12 +50,12 @@ def flushJsp(configObject) {
   withCredentials([usernameColoPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
     instances.each {instance ->
       log.printMagenta("[INFO] Sending cURL to slingjsp on ${instance}")
-      def response = ["curl", "-I","-u", "${admin}", "-X", "POST", "http://${instance}/system/console/slingjsp"].execute().text
-      log.checkCurl(response)
+      def sling_response = ["curl", "-I","-u", "${admin}", "-X", "POST", "http://${instance}/system/console/slingjsp"].execute().text
+      log.checkCurl(sling_response)
 
       log.printMagenta("[INFO] Sending cURL to scriptcache on ${instance}")
-      def response = ["curl", "-I","-u", "${admin}", "-X", "POST", "http://${instance}/system/console/scriptcache"].execute().text
-      log.checkCurl(response)
+      def script_response = ["curl", "-I","-u", "${admin}", "-X", "POST", "http://${instance}/system/console/scriptcache"].execute().text
+      log.checkCurl(script_response)
     }
   }
 }
