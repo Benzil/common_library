@@ -9,7 +9,6 @@ pipeline {
 
   parameters {
     string(name: 'branch', defaultValue: '', description: '')
-    string(name: 'config', defaultValue: 'config-default', description: '')
     choice(name: 'environment', choices: ['lab2','lab3b','lab5a','labe2esi'], description: '')
   }
 
@@ -44,12 +43,26 @@ pipeline {
       }
     }
 
-    stage ('Refresh bundles') {
+    stage ('Build artifact') {
       steps {
         script {
           aem.buildArtifact(configObject)
         }
       }
+    }
+
+    stage ('Archive artifact') {
+      steps {
+        script {
+          aem.archiveArtifact(configObject)
+        }
+      }
+    }
+  }
+
+  post {
+    always {
+      archiveArtifacts artifacts: 'artifacts/*.tar.gz'
     }
   }
 }
