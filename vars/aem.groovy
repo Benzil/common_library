@@ -58,10 +58,11 @@ def refreshBundles(configObject) {
 
 def buildArtifact(configObject) {
   configObject.global.components.each { component ->
-    log.printMagenta("[INFO] Compiling ${component.getValue().folder}")
+    componentJson = component.getValue()
+    log.printMagenta("[INFO] Compiling ${componentJson.folder}")
     configFileProvider([configFile(fileId: 'maven_settings', variable: 'MAVEN_SETTINGS_XML')]){
-      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./${component.getValue().folder}/pom.xml clean versions:set versions:commit")
-      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./${component.getValue().folder}/pom.xml package ${component.getValue().params}")
+      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./${componentJson.folder}/pom.xml clean versions:set versions:commit")
+      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./${componentJson.folder}/pom.xml package ${componentJson.params}")
     }
   }
 }
