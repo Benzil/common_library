@@ -8,6 +8,8 @@ pipeline {
   }
 
   parameters {
+    string(name: 'branch', default_value: '', description: '')
+    string(name: 'config', default_value: 'config-default', description: '')
     choice(name: 'environment', choices: ['lab2','lab3b','lab5a','labe2esi'], description: '')
   }
 
@@ -16,23 +18,33 @@ pipeline {
       steps {
         script {
           configObject = aem.calculateConfig(params.environment)
-          currentBuild.displayName = params.environment
+          package_json = readJSON file: "orion-frontend/package.json"
+          configObject.global.version = package_json.version
+          currentBuild.displayName = params.environment + "-" + configObject.global.version
         }
       }
     }
 
-    stage ('Flush JSP') {
+    stage ('Checkout') {
       steps {
-        script {
-          aem.flushJsp(configObject)
-        }
+        checkout scm: [
+          $class: 'GitSCM',
+          branches: [[name: params.branch]],
+          doGenerateSubmoduleConfigurations: false,
+          extensions: [],
+          submoduleCfg: [], 
+          userRemoteConfigs: [[
+            credentialsId: configObject.global.git_user_id,
+            url: configObject.global.repository
+          ]]
+        ]
       }
     }
 
     stage ('Refresh bundles') {
       steps {
         script {
-          aem.refreshBundles(configObject)
+          aem.buildArtifact(configObject)
         }
       }
     }

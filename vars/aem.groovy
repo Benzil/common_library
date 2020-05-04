@@ -20,6 +20,7 @@ def calculateConfig(environment) {
   }
 }
 
+// Returns list of all authors and publishers
 def collectAemInstances(configObject) {
   def instances = []
   instances.addAll(configObject.authors)
@@ -29,6 +30,7 @@ def collectAemInstances(configObject) {
 
 def invalidateCache(configObject) {
   configObject.dispatchers.each {dispatcher ->
+    log.printMagenta("[INFO] Invalidating cache on ${dispatcher}")
     sh(script: "curl -I -X','GET','--header CQ-Action: Delete','--header CQ-Handle:/content --header CQ-Path:/content http://${dispatcher}/invalidate.cache")
   }
 }
@@ -50,6 +52,16 @@ def refreshBundles(configObject) {
     instances.each {instance ->
       log.printMagenta("[INFO] Sending cURL to refresh bundles on ${instance}")
       sh(script: "curl -u ${admin} -X POST -F action=refreshPackages http://${instance}/system/console/bundles > /dev/null")
+    }
+  }
+}
+
+def buildArtifact(configObject) {
+  configObject.global.components.each { component ->
+    log.printMagenta("[INFO] Compiling ${component}")
+    configFileProvider([configFile(fileId: 'maven_settings', variable: 'MAVEN_SETTINGS_XML')]){
+      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./${component.folder}/pom.xml clean versions:set versions:commit")
+      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./${component.folder}/pom.xml package ${component.params}")
     }
   }
 }
