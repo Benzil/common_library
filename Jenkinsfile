@@ -8,8 +8,8 @@ pipeline {
   }
 
   parameters {
-    string(name: 'branch', default_value: '', description: '')
-    string(name: 'config', default_value: 'config-default', description: '')
+    string(name: 'branch', defaultValue: '', description: '')
+    string(name: 'config', defaultValue: 'config-default', description: '')
     choice(name: 'environment', choices: ['lab2','lab3b','lab5a','labe2esi'], description: '')
   }
 
@@ -18,9 +18,6 @@ pipeline {
       steps {
         script {
           configObject = aem.calculateConfig(params.environment)
-          package_json = readJSON file: "orion-frontend/package.json"
-          configObject.global.version = package_json.version
-          currentBuild.displayName = params.environment + "-" + configObject.global.version
         }
       }
     }
@@ -38,6 +35,12 @@ pipeline {
             url: configObject.global.repository
           ]]
         ]
+        
+        script {
+          package_json = readJSON file: "orion-frontend/package.json"
+          configObject.global.version = package_json.version
+          currentBuild.displayName = params.environment + "-" + configObject.global.version
+        }
       }
     }
 

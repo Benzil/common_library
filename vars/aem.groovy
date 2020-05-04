@@ -58,7 +58,7 @@ def refreshBundles(configObject) {
 
 def buildArtifact(configObject) {
   configObject.global.components.each { component ->
-    log.printMagenta("[INFO] Compiling ${component}")
+    log.printMagenta("[INFO] Compiling ${component.folder}")
     configFileProvider([configFile(fileId: 'maven_settings', variable: 'MAVEN_SETTINGS_XML')]){
       sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./${component.folder}/pom.xml clean versions:set versions:commit")
       sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./${component.folder}/pom.xml package ${component.params}")
