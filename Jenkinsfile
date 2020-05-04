@@ -8,7 +8,7 @@ pipeline {
   }
 
   parameters {
-    string(name: 'branch', defaultValue: '', description: '')
+    string(name: 'tag', defaultValue: '', description: '')
     choice(name: 'environment', choices: ['lab2','lab3b','lab5a','labe2esi'], description: '')
   }
 
@@ -25,7 +25,7 @@ pipeline {
       steps {
         checkout scm: [
           $class: 'GitSCM',
-          branches: [[name: params.branch]],
+          branches: [[name: "refs/tags/${params.tag}"]],
           doGenerateSubmoduleConfigurations: false,
           extensions: [],
           submoduleCfg: [], 
@@ -43,7 +43,7 @@ pipeline {
       }
     }
 
-    stage ('Build artifact') {
+    stage ('Build') {
       steps {
         script {
           aem.buildArtifact(configObject)
@@ -51,10 +51,10 @@ pipeline {
       }
     }
 
-    stage ('Archive artifact') {
+    stage ('Archive') {
       steps {
         script {
-          aem.archiveArtifact(configObject)
+          aem.archiveArtifact(configObject, params.tag)
         }
       }
     }
