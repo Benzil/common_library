@@ -72,7 +72,7 @@ def archiveArtifact(configObject) {
     configObject.global.components.each { component ->
       componentJson = component.getValue()
       log.printMagenta("[INFO] Copying artifact ${componentJson.folder}")
-      sh(script: "cp ${componentJson.folder}/target/*.${componentJson.package_type} ./")
+      sh(script: "cp ../${componentJson.folder}/target/*.${componentJson.package_type} ./")
     }
     sh(script: "tar -cvzf ${configObject.global.version}.tar.gz ./*")
   }
