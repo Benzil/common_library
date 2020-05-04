@@ -31,7 +31,7 @@ def collectAemInstances(configObject) {
 def invalidateCache(configObject) {
   configObject.dispatchers.each {dispatcher ->
     log.printMagenta("[INFO] Invalidating cache on ${dispatcher}")
-    sh(script: "curl -I -X','GET','--header CQ-Action: Delete','--header CQ-Handle:/content --header CQ-Path:/content http://${dispatcher}/invalidate.cache")
+    sh(script: "curl -I -X GET --header CQ-Action: Delete --header CQ-Handle:/content --header CQ-Path:/content http://${dispatcher}/invalidate.cache")
   }
 }
 
