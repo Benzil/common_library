@@ -9,14 +9,13 @@ pipeline {
 
   parameters {
     string(name: 'tag', defaultValue: '', description: '')
-    choice(name: 'environment', choices: ['lab2','lab3b','lab5a','labe2esi'], description: '')
   }
 
   stages {
     stage ('Init') {
       steps {
         script {
-          configObject = aem.calculateConfig(params.environment)
+          configObject = aem.calculateConfig()
         }
       }
     }

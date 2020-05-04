@@ -20,6 +20,16 @@ def calculateConfig(environment) {
   }
 }
 
+def calculateConfig() {
+  configFileProvider([configFile(fileId: 'web_config', variable: 'CONFIG')]){
+    def conf = readJSON file: "${CONFIG}"
+    
+    def configObject = [:]
+    configObject["global"] = conf.global
+    return configObject
+  }
+}
+
 // Returns list of all authors and publishers
 def collectAemInstances(configObject) {
   def instances = []
