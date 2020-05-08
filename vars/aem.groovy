@@ -42,7 +42,7 @@ def invalidateCache(configObject) {
   configObject.dispatchers.each {dispatcher ->
     log.printMagenta("[INFO] Invalidating cache on ${dispatcher}")
     // sh(script: "curl -I -X GET --header 'CQ-Action:Delete' --header 'CQ-Handle:/content' --header 'CQ-Path:/content' --header 'CQ-Path:/etc' http://${dispatcher}/invalidate.cache")
-    sh(script: "curl -H 'CQ-Action: Delete' -H 'CQ-Handle: /etc/designs/orion' -H 'CQ-Path: /etc/designs/orion' -H 'Content-Length:0' -H 'Content-Type: application/octet-stream' --noproxy .com http://${dispatcher}/invalidate.cache")
+    sh(script: "curl -H 'CQ-Action: Delete' -H 'CQ-Handle: /' -H 'CQ-Path: /' -H 'Content-Length:0' -H 'Content-Type: application/octet-stream' --noproxy .com http://${dispatcher}/invalidate.cache")
   }
 }
 
