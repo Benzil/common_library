@@ -41,7 +41,7 @@ def collectAemInstances(configObject) {
 def invalidateCache(configObject) {
   configObject.dispatchers.each {dispatcher ->
     log.printMagenta("[INFO] Invalidating cache on ${dispatcher}")
-    sh(script: "curl -I -X GET --header CQ-Action: Delete --header CQ-Handle:/content --header CQ-Path:/content http://${dispatcher}/invalidate.cache")
+    sh(script: "curl -I -X GET --header 'CQ-Action: Delete' --header 'CQ-Handle:/content' --header 'CQ-Path:/content' http://${dispatcher}/invalidate.cache")
   }
 }
 
@@ -64,6 +64,10 @@ def refreshBundles(configObject) {
       sh(script: "curl -u ${admin} -X POST -F action=refreshPackages http://${instance}/system/console/bundles > /dev/null")
     }
   }
+}
+
+def checkArtifact(configObject) {
+  
 }
 
 def buildArtifact(configObject) {
