@@ -67,17 +67,36 @@ def refreshBundles(configObject) {
 }
 
 def checkArtifact(configObject) {
-  
 }
 
+
+// Build package which contains core, config, chromecast and content parts
 def buildArtifact(configObject) {
-  configObject.global.components.each { component ->
-    componentJson = component.getValue()
-    log.printMagenta("[INFO] Compiling ${componentJson.folder}")
-    configFileProvider([configFile(fileId: 'maven_settings', variable: 'MAVEN_SETTINGS_XML')]){
-      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./${componentJson.folder}/pom.xml clean versions:set versions:commit")
-      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./${componentJson.folder}/pom.xml package ${componentJson.params}")
-    }
+  // configObject.global.components.each { component ->
+  //   componentJson = component.getValue()
+  //   log.printMagenta("[INFO] Compiling ${componentJson.folder}")
+  //   configFileProvider([configFile(fileId: 'maven_settings', variable: 'MAVEN_SETTINGS_XML')]){
+  //     sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./${componentJson.folder}/pom.xml clean versions:set versions:commit")
+  //     sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./${componentJson.folder}/pom.xml package ${componentJson.params}")
+  //   }
+  // }
+  configFileProvider([configFile(fileId: 'maven_settings', variable: 'MAVEN_SETTINGS_XML')]){
+
+    log.printMagenta("[INFO] Compiling orion-core")
+    sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-core/pom.xml clean versions:set versions:commit")
+    sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-core/pom.xml package install -DskipTests")
+
+    log.printMagenta("[INFO] Compiling orion-content")
+    sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-content/pom.xml clean versions:set versions:commit")
+    sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-content/pom.xml package")
+
+    log.printMagenta("[INFO] Compiling orion-config")
+    sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-config/pom.xml clean versions:set versions:commit")
+    sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-config/pom.xml package -P config-default")
+
+    log.printMagenta("[INFO] Compiling chromecast")
+    sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-chromecast-receiver/pom.xml clean versions:set versions:commit")
+    sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-chromecast-receiver/pom.xml package -Doutput=chromecast")
   }
 }
 
