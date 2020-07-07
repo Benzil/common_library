@@ -110,7 +110,7 @@ def deployArtifact(configObject) {
           orion_config = sh(returnStdout: true, script: "ls orion-config*.zip").trim()
           deploy_package(admin, orion_config, instance)
         } catch (Exception ex) {
-          log.printRed("[ERROR] Package orion-config couldn't be found in current folder"
+          log.printRed("[ERROR] Package orion-config couldn't be found in current folder")
           log.printRed("[ERROR] ${ex}")
         }
 
@@ -118,7 +118,7 @@ def deployArtifact(configObject) {
           orion_content = sh(returnStdout: true, script: "ls orion-content*.zip").trim()
           deploy_package(admin, orion_content, instance)
         } catch (Exception ex) {
-          log.printRed("[ERROR] Package orion-content couldn't be found in current folder"
+          log.printRed("[ERROR] Package orion-content couldn't be found in current folder")
           log.printRed("[ERROR] ${ex}")
         }
 
@@ -126,7 +126,7 @@ def deployArtifact(configObject) {
           orion_chromecast = sh(returnStdout: true, script: "ls orion-chromecast*.zip").trim()
           deploy_package(admin, orion_chromecast, instance)
         } catch (Exception ex) {
-          log.printRed("[ERROR] Package orion-chromecast couldn't be found in current folder"
+          log.printRed("[ERROR] Package orion-chromecast couldn't be found in current folder")
           log.printRed("[ERROR] ${ex}")
         }
       }
