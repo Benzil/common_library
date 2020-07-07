@@ -55,6 +55,32 @@ def flushJsp(configObject) {
   }
 }
 
+def deployBundle(creds, bundle, instance) {
+  log.printMagenta("[INFO] Deploying ${bundle} on ${instance}")
+  try {
+    sh(script: "curl -u ${creds} -F action=install -F bundlestartlevel=20 -F bundlefile=@${bundle} http://${instance}/system/console/bundles")
+    sh(script: "curl -u ${creds} -F action=start http://${instance}/system/console/bundles/com.upc.day.core.orion-core")
+    log.printMagenta("[INFO] Bundle deployed successfully")
+  } catch (Exception ex) {
+    log.printRed("[ERROR] Deployment failed")
+    log.printRed("[ERROR] ${ex}")
+    currentBuild.result = 'FAILURE'
+  }
+}
+
+def deployPackage(creds, package, instance) {
+  log.printMagenta("[INFO] Deploying ${package} on ${instance}")
+  try {
+    sh(script: "curl -u ${creds} -X POST -F cmd=upload -F force=true -F package=@${package} http://${instance}/crx/packmgr/service/.json")
+    sh(script: "curl -u ${creds} -X POST -F cmd=install http://${instance}/crx/packmgr/service/.json/etc/packages/com.upc.day/${package}")
+    log.printMagenta("[INFO] Package deployed successfully")
+  } catch (Exception ex) {
+    log.printRed("[ERROR] Deployment failed")
+    log.printRed("[ERROR] ${ex}")
+    currentBuild.result = 'FAILURE'
+  }
+}
+
 // Outputs whole list of bundles, output redirected to /dev/null
 def refreshBundles(configObject) {
   instances = collectAemInstances(configObject)
@@ -62,6 +88,48 @@ def refreshBundles(configObject) {
     instances.each {instance ->
       log.printMagenta("[INFO] Sending cURL to refresh bundles on ${instance}")
       sh(script: "curl -u ${admin} -X POST -F action=refreshPackages http://${instance}/system/console/bundles > /dev/null")
+    }
+  }
+}
+
+def deployArtifact(configObject) {
+  dir('artifacts') {
+    instances = collectAemInstances(configObject)
+    withCredentials([usernameColonPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]) {
+      sh(script: 'ls -la')
+      instances.each { instance -> 
+        try {
+          orion_core = sh(returnStdout: true, script: "ls orion-core*.jar").trim()
+          deploy_bundle(admin, orion_core, instance)
+        } catch (Exception ex) {
+          log.printRed("[ERROR] Bundle orion-core couldn't be found in current folder"
+          log.printRed("[ERROR] ${ex}")
+        }
+
+        try {
+          orion_config = sh(returnStdout: true, script: "ls orion-config*.zip").trim()
+          deploy_package(admin, orion_config, instance)
+        } catch (Exception ex) {
+          log.printRed("[ERROR] Package orion-config couldn't be found in current folder"
+          log.printRed("[ERROR] ${ex}")
+        }
+
+        try {
+          orion_content = sh(returnStdout: true, script: "ls orion-content*.zip").trim()
+          deploy_package(admin, orion_content, instance)
+        } catch (Exception ex) {
+          log.printRed("[ERROR] Package orion-content couldn't be found in current folder"
+          log.printRed("[ERROR] ${ex}")
+        }
+
+        try {
+          orion_chromecast = sh(returnStdout: true, script: "ls orion-chromecast*.zip").trim()
+          deploy_package(admin, orion_chromecast, instance)
+        } catch (Exception ex) {
+          log.printRed("[ERROR] Package orion-chromecast couldn't be found in current folder"
+          log.printRed("[ERROR] ${ex}")
+        }
+      }
     }
   }
 }
@@ -136,11 +204,4 @@ def checkoutBranch(configObject, branch) {
       url: configObject.global.repository
     ]]
   ]
-}
-
-def deployArtifact(configObject) {
-  dir('artifcats') {
-    
-    sh(script: "")
-  }
 }
