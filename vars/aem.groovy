@@ -110,6 +110,34 @@ def packageArtifact(tag) {
   }
 }
 
+def checkoutTag(configObject, tag) {
+  checkout scm: [
+    $class: 'GitSCM',
+    branches: [[name: "refs/tags/${tag}"]],
+    doGenerateSubmoduleConfigurations: false,
+    extensions: [],
+    submoduleCfg: [], 
+    userRemoteConfigs: [[
+      credentialsId: configObject.global.git_user_id,
+      url: configObject.global.repository
+    ]]
+  ]
+}
+
+def checkoutBranch(configObject, branch) {
+  checkout scm: [
+    $class: 'GitSCM',
+    branches: [[name: "${branch}"]],
+    doGenerateSubmoduleConfigurations: false,
+    extensions: [],
+    submoduleCfg: [], 
+    userRemoteConfigs: [[
+      credentialsId: configObject.global.git_user_id,
+      url: configObject.global.repository
+    ]]
+  ]
+}
+
 def deployArtifact(configObject) {
   dir('artifcats') {
     
