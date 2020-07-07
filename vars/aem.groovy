@@ -97,7 +97,7 @@ def packageArtifact(tag) {
     packages.each { pack ->
       try {
         log.printMagenta("[INFO] Copying ${pack} to artifacts folder")
-        if pack == 'orion-core' {
+        if (pack == 'orion-core') {
           sh(script: "cp ../${pack}/target/*.jar ./")
         } else {
           sh(script: "cp ../${pack}/target/*.zip ./")
