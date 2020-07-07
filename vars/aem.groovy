@@ -102,7 +102,7 @@ def deployArtifact(configObject) {
           orion_core = sh(returnStdout: true, script: "ls orion-core*.jar").trim()
           deploy_bundle(admin, orion_core, instance)
         } catch (Exception ex) {
-          log.printRed("[ERROR] Bundle orion-core couldn't be found in current folder"
+          log.printRed("[ERROR] Bundle orion-core couldn't be found in current folder")
           log.printRed("[ERROR] ${ex}")
         }
 
