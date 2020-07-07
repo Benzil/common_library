@@ -94,16 +94,16 @@ def buildArtifact(configObject) {
 def packageArtifact(tag) {
   dir('artifacts'){
     def packages = ['orion-core', 'orion-content', 'orion-config', 'orion-chromecast-receiver']
-    packages.each { package ->
+    packages.each { pack ->
       try {
-        log.printMagenta("[INFO] Copying ${package} to artifacts folder")
-        if package == 'orion-core' {
-          sh(script: "cp ../${package}/target/*.jar ./")
+        log.printMagenta("[INFO] Copying ${pack} to artifacts folder")
+        if pack == 'orion-core' {
+          sh(script: "cp ../${pack}/target/*.jar ./")
         } else {
-          sh(script: "cp ../${package}/target/*.zip ./")
+          sh(script: "cp ../${pack}/target/*.zip ./")
         }
       } catch (Exception ex) {
-        log.printRed("[ERROR] Package ${package} could not be found")
+        log.printRed("[ERROR] Package ${pack} could not be found")
       }
     }
     sh(script: "tar -cvzf ${tag}.tar.gz ./*")
