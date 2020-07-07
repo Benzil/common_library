@@ -69,17 +69,8 @@ def refreshBundles(configObject) {
 def checkArtifact(configObject) {
 }
 
-
 // Build package which contains core, config, chromecast and content parts
 def buildArtifact(configObject) {
-  // configObject.global.components.each { component ->
-  //   componentJson = component.getValue()
-  //   log.printMagenta("[INFO] Compiling ${componentJson.folder}")
-  //   configFileProvider([configFile(fileId: 'maven_settings', variable: 'MAVEN_SETTINGS_XML')]){
-  //     sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./${componentJson.folder}/pom.xml clean versions:set versions:commit")
-  //     sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./${componentJson.folder}/pom.xml package ${componentJson.params}")
-  //   }
-  // }
   configFileProvider([configFile(fileId: 'maven_settings', variable: 'MAVEN_SETTINGS_XML')]){
 
     log.printMagenta("[INFO] Compiling orion-core")
@@ -100,13 +91,28 @@ def buildArtifact(configObject) {
   }
 }
 
-def archiveArtifact(configObject, tag) {
+def packageArtifact(tag) {
   dir('artifacts'){
-    configObject.global.components.each { component ->
-      componentJson = component.getValue()
-      log.printMagenta("[INFO] Copying artifact ${componentJson.folder}")
-      sh(script: "cp ../${componentJson.folder}/target/*.${componentJson.package_type} ./")
+    def packages = ['orion-core', 'orion-content', 'orion-config', 'orion-chromecast-receiver']
+    packages.each { package ->
+      try {
+        log.printMagenta("[INFO] Copying ${package} to artifacts folder")
+        if package == 'orion-core' {
+          sh(script: "cp ../${package}/target/*.jar ./")
+        } else {
+          sh(script: "cp ../${package}/target/*.zip ./")
+        }
+      } catch (Exception ex) {
+        log.printRed("[ERROR] Package ${package} could not be found")
+      }
     }
     sh(script: "tar -cvzf ${tag}.tar.gz ./*")
+  }
+}
+
+def deployArtifact(configObject) {
+  dir('artifcats') {
+    
+    sh(script: "")
   }
 }

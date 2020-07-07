@@ -2,10 +2,6 @@
   "global": {
     "aem_admin_id": "<aem_admin_user_creds_id>",
     "bucket": "s3bucket",
-    "components": {
-      "component1": "./component1",
-      "component2": "./component2"
-    },
     "environment": "stage",
     "maven_settings_id": "stage_maven_settings",
     "git_user_id": "<git_user_creds_id>",
