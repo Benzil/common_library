@@ -123,10 +123,10 @@ def deployArtifact(configObject) {
         }
 
         try {
-          orion_chromecast = sh(returnStdout: true, script: "ls orion-chromecast*.zip").trim()
+          orion_chromecast = sh(returnStdout: true, script: "ls orion-caf-receiver-chromecast*.zip").trim()
           deployPackage(admin, orion_chromecast, instance)
         } catch (Exception ex) {
-          log.printRed("[ERROR] Package orion-chromecast couldn't be found in current folder")
+          log.printRed("[ERROR] Package orion-caf-receiver-chromecast couldn't be found in current folder")
           log.printRed("[ERROR] ${ex}")
         }
       }
