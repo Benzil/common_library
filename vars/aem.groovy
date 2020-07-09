@@ -20,6 +20,7 @@ def calculateConfig(environment) {
   }
 }
 
+// Dublicates function calculateConfig but without providing any environments
 def calculateConfig() {
   configFileProvider([configFile(fileId: 'web_config', variable: 'CONFIG')]){
     def conf = readJSON file: "${CONFIG}"
@@ -30,7 +31,7 @@ def calculateConfig() {
   }
 }
 
-// Returns list of all authors and publishers
+// Returns list of all authors and publishers from provided config
 def collectAemInstances(configObject) {
   def instances = []
   instances.addAll(configObject.authors)
@@ -38,23 +39,36 @@ def collectAemInstances(configObject) {
   return instances
 }
 
-def invalidateCache(configObject) {
-  configObject.dispatchers.each {dispatcher ->
-    log.printMagenta("[INFO] Invalidating cache on ${dispatcher}")
-    sh(script: "curl -H 'CQ-Action: Delete' -H 'CQ-Handle: /' -H 'CQ-Path: /' -H 'Content-Length:0' -H 'Content-Type: application/octet-stream' --noproxy .com http://${dispatcher}/invalidate.cache")
-  }
+// Checkout section
+def checkoutTag(configObject, tag) {
+  checkout scm: [
+    $class: 'GitSCM',
+    branches: [[name: "refs/tags/${tag}"]],
+    doGenerateSubmoduleConfigurations: false,
+    extensions: [],
+    submoduleCfg: [], 
+    userRemoteConfigs: [[
+      credentialsId: configObject.global.git_user_id,
+      url: configObject.global.repository
+    ]]
+  ]
 }
 
-def flushJsp(configObject) {
-  instances = collectAemInstances(configObject)
-  withCredentials([usernameColonPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
-    instances.each {instance ->
-      log.printMagenta("[INFO] Sending cURL to slingjsp on ${instance}")
-      sh(script: "curl -u ${admin} -I -X POST http://${instance}/system/console/slingjsp")
-    }
-  }
+def checkoutBranch(configObject, branch) {
+  checkout scm: [
+    $class: 'GitSCM',
+    branches: [[name: "${branch}"]],
+    doGenerateSubmoduleConfigurations: false,
+    extensions: [],
+    submoduleCfg: [], 
+    userRemoteConfigs: [[
+      credentialsId: configObject.global.git_user_id,
+      url: configObject.global.repository
+    ]]
+  ]
 }
 
+// Generic functions to deploy bundle and package to AEM instance
 def deployBundle(creds, bundle, instance) {
   log.printMagenta("[INFO] Deploying ${bundle} on ${instance}")
   try {
@@ -81,13 +95,47 @@ def deployPackage(creds, pack, instance) {
   }
 }
 
-// Outputs whole list of bundles, output redirected to /dev/null
+// Triggers bundles refresh, output redirected to /dev/null
 def refreshBundles(configObject) {
   instances = collectAemInstances(configObject)
   withCredentials([usernameColonPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
     instances.each {instance ->
       log.printMagenta("[INFO] Sending cURL to refresh bundles on ${instance}")
       sh(script: "curl -u ${admin} -X POST -F action=refreshPackages http://${instance}/system/console/bundles > /dev/null")
+    }
+  }
+}
+
+// Build package which contains core, config, chromecast and content parts
+def buildArtifact(configObject, build_config, build_content, build_chromecast) {
+  configFileProvider([configFile(fileId: 'maven_settings', variable: 'MAVEN_SETTINGS_XML')]){
+
+    log.printMagenta("[INFO] Compiling orion-core")
+    sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-core/pom.xml clean versions:set versions:commit")
+    sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-core/pom.xml package install -DskipTests")
+
+    if(build_config == true ) { 
+      log.printMagenta("[INFO] Compiling orion-config")
+      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-config/pom.xml clean versions:set versions:commit")
+      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-config/pom.xml package -P config-default")
+    } else {
+      log.printMagenta("[INFO] Skipping orion-config compilation")
+    }
+
+    if(build_content == true ) {
+      log.printMagenta("[INFO] Compiling orion-content")
+      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-content/pom.xml clean versions:set versions:commit")
+      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-content/pom.xml package")
+    } else {
+      log.printMagenta("[INFO] Skipping orion-content compilation")
+    }
+
+    if(build_chromecast == true) {
+      log.printMagenta("[INFO] Compiling chromecast")
+      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-chromecast-receiver/pom.xml clean versions:set versions:commit")
+      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-chromecast-receiver/pom.xml package -Doutput=chromecast")
+    } else {
+      log.printMagenta("[INFO] Skipping orion-chromecast compilation")
     }
   }
 }
@@ -153,41 +201,24 @@ def deployArtifact(configObject, deploy_core, deploy_config, deploy_content, dep
 def checkArtifact(configObject) {
 }
 
-// Build package which contains core, config, chromecast and content parts
-def buildArtifact(configObject, build_config, build_content, build_chromecast) {
-  configFileProvider([configFile(fileId: 'maven_settings', variable: 'MAVEN_SETTINGS_XML')]){
+def invalidateCache(configObject) {
+  configObject.dispatchers.each {dispatcher ->
+    log.printMagenta("[INFO] Invalidating cache on ${dispatcher}")
+    sh(script: "curl -H 'CQ-Action: Delete' -H 'CQ-Handle: /' -H 'CQ-Path: /' -H 'Content-Length:0' -H 'Content-Type: application/octet-stream' --noproxy .com http://${dispatcher}/invalidate.cache")
+  }
+}
 
-    log.printMagenta("[INFO] Compiling orion-core")
-    sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-core/pom.xml clean versions:set versions:commit")
-    sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-core/pom.xml package install -DskipTests")
-
-    if(build_config == true ) { 
-      log.printMagenta("[INFO] Compiling orion-config")
-      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-config/pom.xml clean versions:set versions:commit")
-      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-config/pom.xml package -P config-default")
-    } else {
-      log.printMagenta("[INFO] Skipping orion-config compilation")
-    }
-
-    if(build_content == true ) {
-      log.printMagenta("[INFO] Compiling orion-content")
-      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-content/pom.xml clean versions:set versions:commit")
-      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-content/pom.xml package")
-    } else {
-      log.printMagenta("[INFO] Skipping orion-content compilation")
-    }
-
-    if(build_chromecast == true) {
-      log.printMagenta("[INFO] Compiling chromecast")
-      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-chromecast-receiver/pom.xml clean versions:set versions:commit")
-      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-chromecast-receiver/pom.xml package -Doutput=chromecast")
-    } else {
-      log.printMagenta("[INFO] Skipping orion-chromecast compilation")
+def flushJsp(configObject) {
+  instances = collectAemInstances(configObject)
+  withCredentials([usernameColonPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
+    instances.each {instance ->
+      log.printMagenta("[INFO] Sending cURL to slingjsp on ${instance}")
+      sh(script: "curl -u ${admin} -I -X POST http://${instance}/system/console/slingjsp")
     }
   }
 }
 
-def packageArtifact(tag) {
+def packageArtifact(name) {
   dir('artifacts'){
     def packages = ['orion-core', 'orion-content', 'orion-config', 'orion-chromecast-receiver']
     packages.each { pack ->
@@ -202,34 +233,6 @@ def packageArtifact(tag) {
         log.printRed("[ERROR] Package ${pack} could not be found")
       }
     }
-    sh(script: "tar -cvzf ${tag}.tar.gz ./*")
+    sh(script: "tar -cvzf ${name}.tar.gz ./*")
   }
-}
-
-def checkoutTag(configObject, tag) {
-  checkout scm: [
-    $class: 'GitSCM',
-    branches: [[name: "refs/tags/${tag}"]],
-    doGenerateSubmoduleConfigurations: false,
-    extensions: [],
-    submoduleCfg: [], 
-    userRemoteConfigs: [[
-      credentialsId: configObject.global.git_user_id,
-      url: configObject.global.repository
-    ]]
-  ]
-}
-
-def checkoutBranch(configObject, branch) {
-  checkout scm: [
-    $class: 'GitSCM',
-    branches: [[name: "${branch}"]],
-    doGenerateSubmoduleConfigurations: false,
-    extensions: [],
-    submoduleCfg: [], 
-    userRemoteConfigs: [[
-      credentialsId: configObject.global.git_user_id,
-      url: configObject.global.repository
-    ]]
-  ]
 }
