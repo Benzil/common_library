@@ -92,42 +92,58 @@ def refreshBundles(configObject) {
   }
 }
 
-def deployArtifact(configObject) {
+def deployArtifact(configObject, deploy_core, deploy_config, deploy_content, deploy_chromecast) {
   dir('artifacts') {
     instances = collectAemInstances(configObject)
     withCredentials([usernameColonPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]) {
       sh(script: 'ls -la')
       instances.each { instance -> 
-        try {
-          orion_core = sh(returnStdout: true, script: "ls orion-core*.jar").trim()
-          deployBundle(admin, orion_core, instance)
-        } catch (Exception ex) {
-          log.printRed("[ERROR] Bundle orion-core couldn't be found in current folder")
-          log.printRed("[ERROR] ${ex}")
+        if (deploy_core == true) {
+          try {
+            orion_core = sh(returnStdout: true, script: "ls orion-core*.jar").trim()
+            deployBundle(admin, orion_core, instance)
+          } catch (Exception ex) {
+            log.printRed("[ERROR] Bundle orion-core couldn't be found in current folder")
+            log.printRed("[ERROR] ${ex}")
+          }
+        } else {
+          log.printMagenta("[INFO] Skipping core deployment")
         }
 
-        try {
-          orion_config = sh(returnStdout: true, script: "ls orion-config*.zip").trim()
-          deployPackage(admin, orion_config, instance)
-        } catch (Exception ex) {
-          log.printRed("[ERROR] Package orion-config couldn't be found in current folder")
-          log.printRed("[ERROR] ${ex}")
+        if (deploy_config == true) {
+          try {
+            orion_config = sh(returnStdout: true, script: "ls orion-config*.zip").trim()
+            deployPackage(admin, orion_config, instance)
+          } catch (Exception ex) {
+            log.printRed("[ERROR] Package orion-config couldn't be found in current folder")
+            log.printRed("[ERROR] ${ex}")
+          }
+        } else {
+          log.printMagenta("[INFO] Skipping config deployment")
         }
 
-        try {
-          orion_content = sh(returnStdout: true, script: "ls orion-content*.zip").trim()
-          deployPackage(admin, orion_content, instance)
-        } catch (Exception ex) {
-          log.printRed("[ERROR] Package orion-content couldn't be found in current folder")
-          log.printRed("[ERROR] ${ex}")
+        if (deploy_content == true ) {
+          try {
+            orion_content = sh(returnStdout: true, script: "ls orion-content*.zip").trim()
+            deployPackage(admin, orion_content, instance)
+          } catch (Exception ex) {
+            log.printRed("[ERROR] Package orion-content couldn't be found in current folder")
+            log.printRed("[ERROR] ${ex}")
+          }
+        } else {
+          log.printMagenta("[INFO] Skipping content deployment")
         }
 
-        try {
-          orion_chromecast = sh(returnStdout: true, script: "ls orion-caf-receiver-chromecast*.zip").trim()
-          deployPackage(admin, orion_chromecast, instance)
-        } catch (Exception ex) {
-          log.printRed("[ERROR] Package orion-caf-receiver-chromecast couldn't be found in current folder")
-          log.printRed("[ERROR] ${ex}")
+        if (deploy_chromecast == true ) {
+          try {
+            orion_chromecast = sh(returnStdout: true, script: "ls orion-caf-receiver-chromecast*.zip").trim()
+            deployPackage(admin, orion_chromecast, instance)
+          } catch (Exception ex) {
+            log.printRed("[ERROR] Package orion-caf-receiver-chromecast couldn't be found in current folder")
+            log.printRed("[ERROR] ${ex}")
+          }
+        } else {
+          log.printMagenta("[INFO] Skipping chromecast deployment")
         }
       }
     }
@@ -149,18 +165,24 @@ def buildArtifact(configObject, build_config, build_content, build_chromecast) {
       log.printMagenta("[INFO] Compiling orion-config")
       sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-config/pom.xml clean versions:set versions:commit")
       sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-config/pom.xml package -P config-default")
+    } else {
+      log.printMagenta("[INFO] Skipping orion-config compilation")
     }
 
     if(build_content == true ) {
       log.printMagenta("[INFO] Compiling orion-content")
       sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-content/pom.xml clean versions:set versions:commit")
       sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-content/pom.xml package")
+    } else {
+      log.printMagenta("[INFO] Skipping orion-content compilation")
     }
 
     if(build_chromecast == true) {
       log.printMagenta("[INFO] Compiling chromecast")
       sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-chromecast-receiver/pom.xml clean versions:set versions:commit")
       sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-chromecast-receiver/pom.xml package -Doutput=chromecast")
+    } else {
+      log.printMagenta("[INFO] Skipping orion-chromecast compilation")
     }
   }
 }
