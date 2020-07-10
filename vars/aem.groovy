@@ -226,6 +226,7 @@ def flushJsp(configObject) {
     instances.each {instance ->
       log.printMagenta("[INFO] Sending cURL to slingjsp on ${instance}")
       sh(script: "curl -u ${admin} -I -X POST http://${instance}/system/console/slingjsp")
+      sh(script: "curl -u ${admin} -X POST http://${instance}/system/console/scriptcache")
     }
   }
 }
