@@ -107,7 +107,7 @@ def refreshBundles(configObject) {
 }
 
 // Build package which contains core, config, chromecast and content parts
-def buildArtifact(configObject, build_config, build_content, build_chromecast) {
+def buildArtifact(configObject, build_config, build_content, build_chromecast, chromecast_output) {
   configFileProvider([configFile(fileId: 'maven_settings', variable: 'MAVEN_SETTINGS_XML')]){
 
     log.printMagenta("[INFO] Compiling orion-core")
@@ -133,7 +133,7 @@ def buildArtifact(configObject, build_config, build_content, build_chromecast) {
     if(build_chromecast == true) {
       log.printMagenta("[INFO] Compiling chromecast")
       sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-chromecast-receiver/pom.xml clean versions:set versions:commit")
-      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-chromecast-receiver/pom.xml package -Doutput=chromecast")
+      sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-chromecast-receiver/pom.xml package -Doutput=${chromecast_output}")
     } else {
       log.printMagenta("[INFO] Skipping orion-chromecast compilation")
     }
