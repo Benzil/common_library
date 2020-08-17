@@ -249,3 +249,14 @@ def packageArtifact(name) {
     sh(script: "tar -cvzf ${name}.tar.gz ./*")
   }
 }
+
+def clearJspCache65(configObject) {
+  instances = collectAemInstances(configObject)
+  
+  withCredentials([usernameColonPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
+    instances.each {instance ->
+      def bundle_id = sh(script: "curl http://admin:admin@${instance}.libg-140.projects.epam.com:4502/system/console/bundles/org.apache.sling.commons.fsclassloader | grep -oP \"\"id\":(\d{3})\" | cut -d: -f2")
+      printMagenta(bundle_id)
+    }
+  }
+}
