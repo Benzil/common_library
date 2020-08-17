@@ -257,8 +257,9 @@ def clearJspCache65(configObject) {
     instances.each {instance ->
       def bundle_data = sh(script: "curl -u ${admin} http://${instance}/system/console/bundles/org.apache.sling.commons.fsclassloader | grep lastBundleData")
       def pattern = ~'"id":(\\d{3})'
-      def bundle_id = bundle_data =~ pattern
-      log.printMagenta(bundle_id[0].toString().split(',')[1][0..-2])
+      def bundle_id = bundle_data.toString() =~ pattern
+      log.printMagenta(bundle_id[0])
+      // log.printMagenta(bundle_id[0].toString().split(',')[1][0..-2])
     }
   }
 }
