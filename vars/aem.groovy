@@ -255,7 +255,7 @@ def clearJspCache65(configObject) {
   
   withCredentials([usernameColonPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
     instances.each {instance ->
-      def bundle_id = sh(script: "curl -u ${admin} http://${instance}.libg-140.projects.epam.com:4502/system/console/bundles/org.apache.sling.commons.fsclassloader")
+      def bundle_id = sh(script: "curl -u ${admin} http://${instance}/system/console/bundles/org.apache.sling.commons.fsclassloader")
       printMagenta(bundle_id)
     }
   }
