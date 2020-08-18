@@ -254,9 +254,9 @@ def packageArtifact(name) {
 def clearJspCache65(configObject) {
   instances = collectAemInstances(configObject)
   instances.each {instance ->
-    def bundle_path = sh(script: "ssh -o StrictHostKeyChecking=no aem@${instance[0..-6]} 'grep -rn org.apache.sling.commons.fsclassloader /opt/aem/*/crx-quickstart/launchpad/felix/*'")
+    def bundle_path = sh(script: "ssh -o StrictHostKeyChecking=no aem@${instance[0..-6]} 'grep -rn org.apache.sling.commons.fsclassloader /opt/aem/author/crx-quickstart/launchpad/felix/*'")
     def pattern = /^(.+).bundle.info/
-    def result = bundle_path[0] =~ pattern
+    def result = bundle_path =~ pattern
 
     log.printMagenta("Found path ${result[0][1]}")
     
