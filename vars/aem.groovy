@@ -1,7 +1,7 @@
 // Config provider plugin needed
 // Config should be in JSON format, example could be found in the root of this repository
-def calculateConfig(environment, config) {
-  configFileProvider([configFile(fileId: config, variable: 'CONFIG')]){
+def calculateConfig(environment) {
+  configFileProvider([configFile(fileId: 'web_config', variable: 'CONFIG')]){
     def conf = readJSON file: "${CONFIG}"
     
     def configObject = [:]
@@ -21,8 +21,8 @@ def calculateConfig(environment, config) {
 }
 
 // Dublicates function calculateConfig but without providing any environments
-def calculateConfig(config) {
-  configFileProvider([configFile(fileId: config, variable: 'CONFIG')]){
+def calculateConfig() {
+  configFileProvider([configFile(fileId: 'web_config', variable: 'CONFIG')]){
     def conf = readJSON file: "${CONFIG}"
     
     def configObject = [:]
