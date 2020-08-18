@@ -244,6 +244,7 @@ def packageArtifact(name) {
         }
       } catch (Exception ex) {
         log.printRed("[ERROR] Package ${pack} could not be found")
+        log.printRed(ex)
       }
     }
     sh(script: "tar -cvzf ${name}.tar.gz ./*")
@@ -255,11 +256,19 @@ def clearJspCache65(configObject) {
   
   withCredentials([usernameColonPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
     instances.each {instance ->
-      def bundle_data = sh(script: "curl -u ${admin} http://${instance}/system/console/bundles/org.apache.sling.commons.fsclassloader | grep lastBundleData")
-      def pattern = ~'"id":(\\d{3})'
-      def bundle_id = bundle_data.toString() =~ pattern
-      log.printMagenta(bundle_id)
-      // log.printMagenta(bundle_id[0].toString().split(',')[1][0..-2])
+      def bundle_path = sh(script: "ssh ${instance[0..-6]} 'grep -rn org.apache.sling.commons.fsclassloader /opt/aem/*/crx-quickstart/launchpad/felix/*'")
+      def pattern = /^(.+).bundle.info/
+      def result = bundle_path =~ pattern
+
+      log.printMagenta("Found path ${result[0][1]}")
+      
+      try {
+        log.printMagenta("Cleaning folder")
+        sh(script: "ssh ${instance[0..-6]} sudo rm -rf ${result[0][1]}/data/classes")
+      } catch (Exception ex) {
+        log.printRed("[ERROR] Unable to remove folder")
+        log.printRed(er)
+      }
     }
   }
 }
