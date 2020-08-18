@@ -251,21 +251,21 @@ def packageArtifact(name) {
   }
 }
 
-def clearJspCache65(configObject) {
-  instances = collectAemInstances(configObject)
-  instances.each {instance ->
-    // def bundle_path = sh(script: "ssh -o StrictHostKeyChecking=no aem@${instance[0..-6]} 'grep -rn org.apache.sling.commons.fsclassloader /opt/aem/author/crx-quickstart/launchpad/felix/*'")
-    // def pattern = /^(.+).bundle.info/
-    // def result = bundle_path =~ pattern
+// def clearJspCache65(configObject) {
+//   instances = collectAemInstances(configObject)
+//   instances.each {instance ->
+//     // def bundle_path = sh(script: "ssh -o StrictHostKeyChecking=no aem@${instance[0..-6]} 'grep -rn org.apache.sling.commons.fsclassloader /opt/aem/author/crx-quickstart/launchpad/felix/*'")
+//     // def pattern = /^(.+).bundle.info/
+//     // def result = bundle_path =~ pattern
 
-    // log.printMagenta("Found path ${result[0][1]}")
+//     // log.printMagenta("Found path ${result[0][1]}")
     
-    try {
-      log.printMagenta("Cleaning folder")
-      sh(script: "ssh -o StrictHostKeyChecking=no aem@${instance[0..-6]} sudo rm -rf /opt/aem/author/crx-quickstart/launchpad/felix/bundle526/data/classes")
-    } catch (Exception ex) {
-      log.printRed("[ERROR] Unable to remove folder")
-      log.printRed(ex)
-    }
-  }
-}
+//     try {
+//       log.printMagenta("Cleaning folder")
+//       sh(script: "ssh -o StrictHostKeyChecking=no aem@${instance[0..-6]} sudo rm -rf /opt/aem/author/crx-quickstart/launchpad/felix/bundle526/data/classes")
+//     } catch (Exception ex) {
+//       log.printRed("[ERROR] Unable to remove folder")
+//       log.printRed(ex)
+//     }
+//   }
+// }
