@@ -225,7 +225,7 @@ def flushJsp(configObject) {
   withCredentials([usernameColonPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
     instances.each {instance ->
       log.printMagenta("[INFO] Sending cURL to slingjsp on ${instance}")
-      sh(script: "curl -u ${admin} -I -X POST http://${instance}/system/console/slingjsp")
+      sh(script: "curl -u ${admin} -I -X POST http://${instance}/system/console/fsclassloader -d 'clear=true'")
       // sh(script: "curl -u ${admin} -X POST http://${instance}/system/console/scriptcache")
     }
   }
