@@ -45,7 +45,7 @@ def checkoutTag(configObject, tag) {
     $class: 'GitSCM',
     branches: [[name: "refs/tags/${tag}"]],
     doGenerateSubmoduleConfigurations: false,
-    extensions: [],
+    extensions: [[$class: 'CloneOption', timeout: 20]],
     submoduleCfg: [], 
     userRemoteConfigs: [[
       credentialsId: configObject.global.git_user_id,
@@ -59,7 +59,7 @@ def checkoutBranch(configObject, branch) {
     $class: 'GitSCM',
     branches: [[name: "${branch}"]],
     doGenerateSubmoduleConfigurations: false,
-    extensions: [],
+    extensions: [[$class: 'CloneOption', timeout: 20]],
     submoduleCfg: [], 
     userRemoteConfigs: [[
       credentialsId: configObject.global.git_user_id,
