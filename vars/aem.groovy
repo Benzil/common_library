@@ -258,7 +258,6 @@ def packageConfig(name) {
       try {
         log.printMagenta("[INFO] Copying ${pack} to artifacts folder")
         sh(script: "cp ../${pack}/target/*.zip ./")
-        }
       } catch (Exception ex) {
         log.printRed("[ERROR] Package ${pack} could not be found")
         log.printRed(ex)
