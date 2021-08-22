@@ -72,8 +72,8 @@ def checkoutBranch(configObject, branch) {
 def deployBundle(creds, bundle, instance) {
   log.printMagenta("[INFO] Deploying ${bundle} on ${instance}")
   try {
-    sh(script: "curl -u ${creds} -F action=install -F bundlestartlevel=20 -F bundlefile=@${bundle} http://${instance}/system/console/bundles")
-    sh(script: "curl -u ${creds} -F action=start http://${instance}/system/console/bundles/com.upc.day.core.orion-core")
+    sh(script: 'curl -u '+creds+' -F action=install -F bundlestartlevel=20 -F bundlefile=@'+bundle+' http://'+instance+'/system/console/bundles")
+    sh(script: 'curl -u '+creds+' -F action=start http://'+instance+'/system/console/bundles/com.upc.day.core.orion-core")
     log.printMagenta("[INFO] Bundle deployed successfully")
   } catch (Exception ex) {
     log.printRed("[ERROR] Deployment failed")
@@ -85,8 +85,8 @@ def deployBundle(creds, bundle, instance) {
 def deployPackage(creds, pack, instance) {
   log.printMagenta("[INFO] Deploying ${pack} on ${instance}")
   try {
-    sh(script: "curl -u ${creds} -X POST -F cmd=upload -F force=true -F package=@${pack} http://${instance}/crx/packmgr/service/.json")
-    sh(script: "curl -u ${creds} -X POST -F cmd=install http://${instance}/crx/packmgr/service/.json/etc/packages/com.upc.day/${pack}")
+    sh(script: 'curl -u '+creds+' -X POST -F cmd=upload -F force=true -F package=@'+pack+' http://'+instance+'/crx/packmgr/service/.json')
+    sh(script: 'curl -u '+creds+' -X POST -F cmd=install http://'+instance+'/crx/packmgr/service/.json/etc/packages/com.upc.day/'+pack)
     log.printMagenta("[INFO] Package deployed successfully")
   } catch (Exception ex) {
     log.printRed("[ERROR] Deployment failed")
@@ -101,7 +101,7 @@ def refreshBundles(configObject) {
   withCredentials([usernameColonPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
     instances.each {instance ->
       log.printMagenta("[INFO] Sending cURL to refresh bundles on ${instance}")
-      sh(script: "curl -u ${admin} -X POST -F action=refreshPackages http://${instance}/system/console/bundles > /dev/null")
+      sh(script: 'curl -u '+admin+' -X POST -F action=refreshPackages http://'+instance+'/system/console/bundles > /dev/null')
     }
   }
 }
@@ -143,11 +143,11 @@ def buildArtifact(version, build_config, build_content, build_chromecast) {
 def buildConfig(configObject, configProfile) {
   configFileProvider([configFile(fileId: 'maven_settings', variable: 'MAVEN_SETTINGS_XML')]){
     log.printMagenta("[INFO] Compiling orion-core")
-    sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-core/pom.xml clean versions:set versions:commit")
+    sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${vesion} -f ./orion-core/pom.xml clean versions:set versions:commit")
     sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-core/pom.xml package install -DskipTests")
 
     log.printMagenta("[INFO] Compiling orion-config")
-    sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${configObject.global.version} -f ./orion-config/pom.xml clean versions:set versions:commit")
+    sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${version} -f ./orion-config/pom.xml clean versions:set versions:commit")
     sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -f ./orion-config/pom.xml package -P ${configProfile}")
   }
 }
@@ -216,7 +216,7 @@ def checkArtifact(configObject) {
 def invalidateCache(configObject) {
   configObject.dispatchers.each {dispatcher ->
     log.printMagenta("[INFO] Invalidating cache on ${dispatcher}")
-    sh(script: "curl -H 'CQ-Action: Delete' -H 'CQ-Handle: /' -H 'CQ-Path: /' -H 'Content-Length:0' -H 'Content-Type: application/octet-stream' --noproxy .com http://${dispatcher}/invalidate.cache")
+    sh(script: "-H 'CQ-Action: Delete' -H 'CQ-Handle: /' -H 'CQ-Path: /' -H 'Content-Length:0' -H 'Content-Type: application/octet-stream' --noproxy .com http://${dispatcher}/invalidate.cache")
   }
 }
 
@@ -225,7 +225,7 @@ def flushJsp(configObject) {
   withCredentials([usernameColonPassword(credentialsId: configObject.global.aem_admin_id, variable: 'admin')]){
     instances.each {instance ->
       log.printMagenta("[INFO] Sending cURL to slingjsp on ${instance}")
-      sh(script: "curl -u ${admin} -X POST http://${instance}/system/console/fsclassloader -d 'clear=true'")
+      sh(script: 'curl -u '+admin+' -X POST http://'+instance+'/system/console/fsclassloader -d "clear=true"')
       // sh(script: "curl -u ${admin} -X POST http://${instance}/system/console/scriptcache")
     }
   }
