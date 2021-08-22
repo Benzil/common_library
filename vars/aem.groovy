@@ -247,7 +247,6 @@ def packageArtifact(name) {
         log.printRed(ex)
       }
     }
-    sh(script: "tar -cvzf ${name}.tar.gz ./*")
   }
 }
 
@@ -263,7 +262,6 @@ def packageConfig(name) {
         log.printRed(ex)
       }
     }
-    sh(script: "tar -cvzf ${name}.tar.gz ./*")
   }
 }
 
