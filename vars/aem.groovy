@@ -140,7 +140,7 @@ def buildArtifact(version, build_config, build_content, build_chromecast) {
   }
 }
 
-def buildConfig(configObject, configProfile) {
+def buildConfig(version, configProfile) {
   configFileProvider([configFile(fileId: 'maven_settings', variable: 'MAVEN_SETTINGS_XML')]){
     log.printMagenta("[INFO] Compiling orion-core")
     sh(script: "mvn -s ${MAVEN_SETTINGS_XML} -DnewVersion=${vesion} -f ./orion-core/pom.xml clean versions:set versions:commit")
