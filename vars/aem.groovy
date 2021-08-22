@@ -72,8 +72,8 @@ def checkoutBranch(configObject, branch) {
 def deployBundle(creds, bundle, instance) {
   log.printMagenta("[INFO] Deploying ${bundle} on ${instance}")
   try {
-    sh(script: 'curl -u '+creds+' -F action=install -F bundlestartlevel=20 -F bundlefile=@'+bundle+' http://'+instance+'/system/console/bundles")
-    sh(script: 'curl -u '+creds+' -F action=start http://'+instance+'/system/console/bundles/com.upc.day.core.orion-core")
+    sh(script: 'curl -u '+creds+' -F action=install -F bundlestartlevel=20 -F bundlefile=@'+bundle+' http://'+instance+'/system/console/bundles')
+    sh(script: 'curl -u '+creds+' -F action=start http://'+instance+'/system/console/bundles/com.upc.day.core.orion-core')
     log.printMagenta("[INFO] Bundle deployed successfully")
   } catch (Exception ex) {
     log.printRed("[ERROR] Deployment failed")
