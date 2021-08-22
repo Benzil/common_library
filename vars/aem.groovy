@@ -251,6 +251,23 @@ def packageArtifact(name) {
   }
 }
 
+def packageConfig(name) {
+  dir('artifacts'){
+    def packages = ['orion-config']
+    packages.each { pack ->
+      try {
+        log.printMagenta("[INFO] Copying ${pack} to artifacts folder")
+        sh(script: "cp ../${pack}/target/*.zip ./")
+        }
+      } catch (Exception ex) {
+        log.printRed("[ERROR] Package ${pack} could not be found")
+        log.printRed(ex)
+      }
+    }
+    sh(script: "tar -cvzf ${name}.tar.gz ./*")
+  }
+}
+
 // def clearJspCache65(configObject) {
 //   instances = collectAemInstances(configObject)
 //   instances.each {instance ->
