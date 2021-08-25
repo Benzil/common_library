@@ -85,8 +85,8 @@ def deployBundle(creds, bundle, instance) {
 def deployPackage(creds, pack, instance) {
   log.printMagenta("[INFO] Deploying ${pack} on ${instance}")
   try {
-    sh(script: 'curl -u '+creds+' -X POST -F force=true -F package=@'+pack+' http://'+instance+'/crx/packmgr/service/.json/?cmd=upload -vv')
-    sh(script: 'curl -u '+creds+' -X POST http://'+instance+'/crx/packmgr/service/.json/etc/packages/com.upc.day/'+pack+'?cmd=install -vv')
+    sh(script: "curl -u ${creds} -X POST -F force=true -F package=@${pack} http://${instance}/crx/packmgr/service/.json/?cmd=upload -vv")
+    sh(script: "curl -u ${creds} -X POST http://${instance}/crx/packmgr/service/.json/etc/packages/com.upc.day/${pack}?cmd=install -vv")
     log.printMagenta("[INFO] Package deployed successfully")
   } catch (Exception ex) {
     log.printRed("[ERROR] Deployment failed")
