@@ -87,7 +87,7 @@ def deployPackage(creds, pack, instance) {
   try {
     sh(script: 'curl -u '+creds+' -X POST -F cmd=upload -F force=true -F package=@'+pack+' http://'+instance+'/crx/packmgr/service/.json')
     sleep(time: 30, unit: "SECONDS")
-    sh(script: 'curl -u '+creds+' -X POST -F cmd=install http://'+instance+'/crx/packmgr/service/.json/etc/packages/com.upc.day/'+pack)
+    sh(script: 'curl -u '+creds+' -X POST http://'+instance+'/crx/packmgr/service/.json/etc/packages/com.upc.day/'+pack+'?cmd=install')
     log.printMagenta("[INFO] Package deployed successfully")
   } catch (Exception ex) {
     log.printRed("[ERROR] Deployment failed")
